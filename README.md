@@ -1,3 +1,5 @@
+( THIS APP IS STILL IN DEVELOPMENT AND WILL NOT WORK )
+
 # TweetKiller
 Mass Delete Tweets and Likes from Twitter/X
 
