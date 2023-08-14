@@ -3,6 +3,7 @@
 import json, optparse, os, requests_oauthlib, sys, time, zipfile
 
 # some colors
+GA = '\033[1;30m'
 RE = '\033[1;31m'
 GR = '\033[1;32m'
 PI = '\033[1;35m'
@@ -58,7 +59,7 @@ def extract(src, dst, force=False):
 	if os.path.exists(dst) and force is False:
 		return
 	with zipfile.ZipFile(options.zipfile, 'r') as z:
-		zipdata = str(z.read(src).decode("utf-8"))
+		zipdata = str(z.read(src).decode('utf-8'))
 		while zipdata[0] != '[': zipdata = zipdata[1:]
 	with open(dst, 'w') as f:
 		f.write(zipdata)
@@ -77,8 +78,9 @@ if options.tweets:
 		tweets = json.load(f)
 	print()
 	for tweet in tweets:
-		print("Tweet: "+ tweet['tweet']['full_text'])
-		print(tweet['tweet']['retweet_count'] + ' Retweets || ' + tweet['tweet']['favorite_count'] + " Likes || Date: " + tweet['tweet']['created_at'])
+		print('Tweet: '+ tweet['tweet']['full_text'])
+		print('Date: %s %s||%s Retweets: %s %s||%s Likes: %s' % \
+			(tweet['tweet']['created_at'], GA, NC, tweet['tweet']['retweet_count'], GA, NC, tweet['tweet']['favorite_count']))
 		if options.delete:
 			response = oauth.delete('https://api.twitter.com/2/tweets/:'+tweet['tweet']['id'])
 			if response.status_code == 200:
@@ -96,8 +98,8 @@ if options.likes:
 		likes = json.load(f)
 	print()
 	for like in likes:
-		print("Like: "+ like['like']['fullText'])
-		print(like['like']['tweetId'])
+		print('Like: ' + like['like']['fullText'])
+		print('Tweet ID: ' + like['like']['tweetId'])
 		if options.delete:
 			response = oauth.delete('https://api.twitter.com/2/users/:'+twitter_user_id+'/likes/:'+like['like']['tweetId'])
 			if response.status_code == 200:
