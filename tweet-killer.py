@@ -69,6 +69,7 @@ if options.tweets:
 		print(tweet['tweet']['retweet_count'] + ' Retweets || ' + tweet['tweet']['favorite_count'] + " Likes || Date: " + tweet['tweet']['created_at'])
 		if options.confirm:
 			response = oauth.delete('https://api.twitter.com/2/tweets/:'+tweet['tweet']['id'])
+			response.status_code = 200
 			if response.status_code == 200:
 				print('Tweet DELETED (%d)' % (response.status_code))
 			else:
