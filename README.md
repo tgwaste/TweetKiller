@@ -19,3 +19,7 @@ I was not at all happy with the other cli mass deletion tools. They were aweful 
 - Don't use --confirm if you want to run the script in pretend mode and just view your tweets/likes.
 - Just run the script by itself for help.
 
+## Disclaimer
+In order to mass delete likes you must have a Basic Developer account which costs $100/month. Thanks Elon!
+Mass deleting tweets will work with the Free account.
+Account descriptions and features can be found here (https://developer.twitter.com/en/products/twitter-api)
