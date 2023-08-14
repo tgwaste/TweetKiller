@@ -15,7 +15,7 @@ I was not at all happy with the other cli mass deletion tools. They were aweful 
 - You need to edit auth.json with your keys.
 - You need to request and download an archive of your twitter data.
   - Settings -> Your Account -> Download an archive of your data
-- Once you have your zip change the name to archive.zip and put it in the TweetKiller director.
+- Once you have your zip change the name to archive.zip and put it in the TweetKiller directory.
 - Example to delete the 10 most recent tweets: ./tweet-killer.py --tweets --count 10
 - Example to delete the 10 most recent likes: ./tweet-killer.py --likes --count 10
 - The script runs in safe mode by default. Use --delete to really do the deletions.
