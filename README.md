@@ -1,5 +1,3 @@
-( THIS APP IS STILL IN DEVELOPMENT AND WILL NOT WORK )
-
 <img src="https://github.com/tgwaste/TweetKiller/blob/main/icon.png" height=150 width=150>
 
 # TweetKiller
