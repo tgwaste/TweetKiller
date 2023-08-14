@@ -52,17 +52,32 @@ def extract(src, dst, force=False):
 		f.write(zipdata)
 	with open(dst, 'r') as f:
 		lines = sum(1 for _ in f)
-	print('Extracted: %s (%d lines)' % (dst, lines))
+	print('Created: %s (%d lines)' % (dst, lines))
 
-extract('data/tweets.js', '/tmp/tweets.json', True)
-extract('data/like.js', '/tmp/likes.json', True)
+tweets_file = '/tmp/tweets.json'
+likes_file = '/tmp/likes.json'
 
-def oauth_get(url):
-	response = oauth.get(url)
-	if response.status_code != 200:
-		print('\nRequest returned an error: {} {}'.format(response.status_code, json.dumps(json.loads(response.text), sort_keys = False, indent = 4)))
-		sys.exit(1)
-	return json.loads(response.text)
+extract('data/tweets.js', tweets_file, True)
+extract('data/like.js', likes_file, True)
 
-jsondata = oauth_get('https://api.twitter.com/2/users/:'+twitter_user_id+'/liked_tweets')
-print(json.dumps(jsondata, sort_keys=False, indent=4))
+if options.tweets:
+	with open(tweets_file, 'r') as f:
+		tweets = json.load(f)
+	print()
+	for tweet in tweets:
+		print("Tweet: "+ tweet['tweet']['full_text'])
+		print(tweet['tweet']['retweet_count'] + ' Retweets || ' + tweet['tweet']['favorite_count'] + " Likes || Date: " + tweet['tweet']['created_at'])
+		if options.confirm:
+			response = oauth.delete('https://api.twitter.com/2/tweets/:'+tweet['tweet']['id'])
+			if response.status_code == 200:
+				print('Tweet DELETED (%d)' % (response.status_code))
+			else:
+				print('\nRequest returned an error: {} {}'.format(response.status_code, json.dumps(json.loads(response.text), sort_keys = False, indent = 4)))
+				sys.exit(1)
+		print()
+		options.count -= 1
+		if options.count < 1:
+			break
+
+
+#print(json.dumps(tweets, sort_keys=False, indent=4))
