@@ -2,14 +2,20 @@
 
 import json, optparse, os, requests_oauthlib, sys, time, zipfile
 
+# some colors
+RE = '\033[1;31m'
+GR = '\033[1;32m'
+PI = '\033[1;35m'
+NC = '\033[0m'
+
 parser = optparse.OptionParser(usage='usage: %prog [options]')
 parser.add_option('-a', '--auth', dest='auth', type='string', default='auth.json', help='path to auth file')
 parser.add_option('-c', '--count', dest='count', type='int', default=0, help='how many to delete')
+parser.add_option('-d', '--delete', dest='delete', action='store_true', default=False, help='really delete')
 parser.add_option('-f', '--force', dest='force', action='store_true', default=False, help='force re-create json files')
 parser.add_option('-l', '--likes', dest='likes', action='store_true', default=False, help='delete likes')
 parser.add_option('-t', '--tweets', dest='tweets', action='store_true', default=False, help='delete tweets')
 parser.add_option('-z', '--zipfile', dest='zipfile', type='string', default='archive.zip', help='path to twitter zip file')
-parser.add_option('-C', '--confirm', dest='confirm', action='store_true', default=False, help='really delete')
 (options, args) = parser.parse_args()
 
 if len(sys.argv[1:]) == 0:
@@ -43,7 +49,10 @@ twitter_user_id = jsondata['id_str']
 twitter_screen_name = jsondata['screen_name']
 
 print('API OAuth Token: %s' % (resource_owner_key))
-print('Twitter User ID: %s (%s)' % (twitter_screen_name, twitter_user_id))
+print('Twitter User ID: %s%s%s (%s)' % (PI, twitter_screen_name, NC, twitter_user_id))
+
+if options.delete is False:
+	print(GR + 'SAFE MODE' + NC)
 
 def extract(src, dst, force=False):
 	if os.path.exists(dst) and force is False:
@@ -70,7 +79,7 @@ if options.tweets:
 	for tweet in tweets:
 		print("Tweet: "+ tweet['tweet']['full_text'])
 		print(tweet['tweet']['retweet_count'] + ' Retweets || ' + tweet['tweet']['favorite_count'] + " Likes || Date: " + tweet['tweet']['created_at'])
-		if options.confirm:
+		if options.delete:
 			response = oauth.delete('https://api.twitter.com/2/tweets/:'+tweet['tweet']['id'])
 			if response.status_code == 200:
 				print('Tweet DELETED (%d)' % (response.status_code))
@@ -89,7 +98,7 @@ if options.likes:
 	for like in likes:
 		print("Like: "+ like['like']['fullText'])
 		print(like['like']['tweetId'])
-		if options.confirm:
+		if options.delete:
 			response = oauth.delete('https://api.twitter.com/2/users/:'+twitter_user_id+'/likes/:'+like['like']['tweetId'])
 			if response.status_code == 200:
 				print('Like DELETED (%d)' % (response.status_code))
