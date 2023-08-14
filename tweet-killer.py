@@ -38,10 +38,12 @@ oauth = requests_oauthlib.OAuth1Session(
 )
 
 response = oauth.get('https://api.twitter.com/1.1/account/verify_credentials.json')
-twitter_user_id = json.loads(response.text)['id_str']
+jsondata = json.loads(response.text)
+twitter_user_id = jsondata['id_str']
+twitter_screen_name = jsondata['screen_name']
 
 print('API OAuth Token: %s' % (resource_owner_key))
-print('Twitter User ID: %s' % (twitter_user_id))
+print('Twitter User ID: %s (%s)' % (twitter_screen_name, twitter_user_id))
 
 def extract(src, dst, force=False):
 	if os.path.exists(dst) and force is False:
@@ -70,19 +72,34 @@ if options.tweets:
 		print(tweet['tweet']['retweet_count'] + ' Retweets || ' + tweet['tweet']['favorite_count'] + " Likes || Date: " + tweet['tweet']['created_at'])
 		if options.confirm:
 			response = oauth.delete('https://api.twitter.com/2/tweets/:'+tweet['tweet']['id'])
-			response.status_code = 200
 			if response.status_code == 200:
 				print('Tweet DELETED (%d)' % (response.status_code))
 			else:
-				print('\nRequest returned an error: {} {}'.format(response.status_code, json.dumps(json.loads(response.text), sort_keys = False, indent = 4)))
+				print('\nRequest returned an error: [{}] {}'.format(response.status_code, json.dumps(json.loads(response.text), sort_keys = False, indent = 4)))
 				sys.exit(1)
 		print()
 		options.count -= 1
 		if options.count < 1:
 			break
 
-
-#print(json.dumps(tweets, sort_keys=False, indent=4))
+if options.likes:
+	with open(likes_file, 'r') as f:
+		likes = json.load(f)
+	print()
+	for like in likes:
+		print("Like: "+ like['like']['fullText'])
+		print(like['like']['tweetId'])
+		if options.confirm:
+			response = oauth.delete('https://api.twitter.com/2/users/:'+twitter_user_id+'/likes/:'+like['like']['tweetId'])
+			if response.status_code == 200:
+				print('Like DELETED (%d)' % (response.status_code))
+			else:
+				print('\nRequest returned an error: [{}] {}'.format(response.status_code, json.dumps(json.loads(response.text), sort_keys = False, indent = 4)))
+				sys.exit(1)
+		print()
+		options.count -= 1
+		if options.count < 1:
+			break
 
 # TODO
 # remove tweet/like from tweets.json/likes.json upon successful deletion
