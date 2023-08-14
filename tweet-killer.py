@@ -5,6 +5,7 @@ import json, optparse, os, requests_oauthlib, sys, time, zipfile
 parser = optparse.OptionParser(usage='usage: %prog [options]')
 parser.add_option('-a', '--auth', dest='auth', type='string', default='auth.json', help='path to auth file')
 parser.add_option('-c', '--count', dest='count', type='int', default=0, help='how many to delete')
+parser.add_option('-f', '--force', dest='force', action='store_true', default=False, help='force re-create json files')
 parser.add_option('-l', '--likes', dest='likes', action='store_true', default=False, help='delete likes')
 parser.add_option('-t', '--tweets', dest='tweets', action='store_true', default=False, help='delete tweets')
 parser.add_option('-z', '--zipfile', dest='zipfile', type='string', default='archive.zip', help='path to twitter zip file')
@@ -57,8 +58,8 @@ def extract(src, dst, force=False):
 tweets_file = '/tmp/tweets.json'
 likes_file = '/tmp/likes.json'
 
-extract('data/tweets.js', tweets_file, True)
-extract('data/like.js', likes_file, True)
+extract('data/tweets.js', tweets_file, options.force)
+extract('data/like.js', likes_file, options.force)
 
 if options.tweets:
 	with open(tweets_file, 'r') as f:
@@ -82,3 +83,6 @@ if options.tweets:
 
 
 #print(json.dumps(tweets, sort_keys=False, indent=4))
+
+# TODO
+# remove tweet/like from tweets.json/likes.json upon successful deletion
