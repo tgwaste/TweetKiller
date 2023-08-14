@@ -67,6 +67,11 @@ def extract(src, dst, force=False):
 		lines = sum(1 for _ in f)
 	print('Created: %s (%d lines)' % (dst, lines))
 
+def scrub(json_file, thelist, deleted):
+	thelist = thelist[deleted:]
+	with open(json_file, 'w') as f:
+		f.write(json.dumps(thelist, sort_keys=False, indent=4))
+
 tweets_file = '/tmp/tweets.json'
 likes_file = '/tmp/likes.json'
 
@@ -74,15 +79,19 @@ extract('data/tweets.js', tweets_file, options.force)
 extract('data/like.js', likes_file, options.force)
 
 if options.tweets:
+	deleted = 0
 	with open(tweets_file, 'r') as f:
 		tweets = json.load(f)
 	print()
+	if len(tweets) < 1:
+		print('nothing to delete, %s is empty' % (tweets_file))
 	for tweet in tweets:
 		print('Tweet: '+ tweet['tweet']['full_text'])
 		print(tweet['tweet']['retweet_count'] + ' Retweets || ' + tweet['tweet']['favorite_count'] + " Likes || Date: " + tweet['tweet']['created_at'])
 		if options.delete:
 			response = oauth.delete('https://api.twitter.com/2/tweets/:'+tweet['tweet']['id'])
 			if response.status_code == 200:
+				deleted += 1
 				print('Tweet DELETED (%d)' % (response.status_code))
 			else:
 				print('\nRequest returned an error: [{}] {}'.format(response.status_code, json.dumps(json.loads(response.text), sort_keys = False, indent = 4)))
@@ -91,18 +100,28 @@ if options.tweets:
 		options.count -= 1
 		if options.count < 1:
 			break
+	scrub(tweets_file, tweets, deleted)
+	print()
+	print('%d total || %d deleted' % (len(tweets)-deleted, deleted))
 
 if options.likes:
+	deleted = 0
 	with open(likes_file, 'r') as f:
 		likes = json.load(f)
 	print()
+	if len(likes) < 1:
+		print('nothing to delete, %s is empty' % (likes_file))
 	for like in likes:
+		if 'fullText' not in like['like']:
+			deleted += 1
+			continue
 		print('Like: ' + like['like']['fullText'])
 		print('Tweet ID: ' + like['like']['tweetId'])
 		if options.delete:
 			response = oauth.delete('https://api.twitter.com/2/users/:'+twitter_user_id+'/likes/:'+like['like']['tweetId'])
 			if response.status_code == 200:
 				print('Like DELETED (%d)' % (response.status_code))
+				deleted += 1
 			else:
 				print('\nRequest returned an error: [{}] {}'.format(response.status_code, json.dumps(json.loads(response.text), sort_keys = False, indent = 4)))
 				sys.exit(1)
@@ -110,6 +129,6 @@ if options.likes:
 		options.count -= 1
 		if options.count < 1:
 			break
-
-# TODO
-# remove tweet/like from tweets.json/likes.json upon successful deletion
+	scrub(likes_file, likes, deleted)
+	print()
+	print('%d total || %d deleted' % (len(likes)-deleted, deleted))
