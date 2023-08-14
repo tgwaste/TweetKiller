@@ -24,5 +24,5 @@ I was not at all happy with the other cli mass deletion tools. They were aweful 
 ## Disclaimer
 - In order to mass delete likes you must have a Basic Developer account which costs $100/month.
 - Mass deleting tweets will work with the Free account.
-- Account levels can be found here (https://developer.twitter.com/en/products/twitter-api)
+- Account types can be found here (https://developer.twitter.com/en/products/twitter-api)
 - Downloading an archive of your data can take up to 48 hours. Be patient.
