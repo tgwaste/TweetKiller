@@ -79,8 +79,7 @@ if options.tweets:
 	print()
 	for tweet in tweets:
 		print('Tweet: '+ tweet['tweet']['full_text'])
-		print('Date: %s %s||%s Retweets: %s %s||%s Likes: %s' % \
-			(tweet['tweet']['created_at'], GA, NC, tweet['tweet']['retweet_count'], GA, NC, tweet['tweet']['favorite_count']))
+		print(tweet['tweet']['retweet_count'] + ' Retweets || ' + tweet['tweet']['favorite_count'] + " Likes || Date: " + tweet['tweet']['created_at'])
 		if options.delete:
 			response = oauth.delete('https://api.twitter.com/2/tweets/:'+tweet['tweet']['id'])
 			if response.status_code == 200:
