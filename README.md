@@ -9,7 +9,8 @@ Mass Delete Tweets and Likes from Twitter/X
 I was not at all happy with the other cli mass deletion tools. They were aweful so I made this and tried to make it as simple as possible.
 
 ## Instructions
-- You need to make a developer account.
+- This assumes you know how to make a twitter developer account and add a project and app.
+- You need to make a developer account. (https://developer.twitter.com)
 - You need to make a project and an app with read/write permissions.
 - You need to edit auth.json with your keys.
 - You need to request and download an archive of your twitter data.
