@@ -12,4 +12,5 @@ I was not at all happy with the other cli mass deletion tools. They were aweful 
 - Example to delete the 10 most recent tweets: ./tweet-killer.py -z your.zip -t -c 10 --confirm
 - Example to delete the 10 most recent likes: ./tweet-killer.py -z your.zip -l -c 10 --confirm
 - Don't use --confirm if you want to run the script in pretend mode and just view your tweets/likes.
+- Just run the script by itself for help.
 
