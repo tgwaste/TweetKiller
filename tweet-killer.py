@@ -89,7 +89,7 @@ if options.tweets:
 		print('Tweet: '+ tweet['tweet']['full_text'])
 		print(tweet['tweet']['retweet_count'] + ' Retweets || ' + tweet['tweet']['favorite_count'] + " Likes || Date: " + tweet['tweet']['created_at'])
 		if options.delete:
-			response = oauth.delete('https://api.twitter.com/2/tweets/:'+tweet['tweet']['id'])
+			response = oauth.delete('https://api.twitter.com/2/tweets/'+tweet['tweet']['id'])
 			if response.status_code == 200:
 				deleted += 1
 				print('Tweet DELETED (%d)' % (response.status_code))
@@ -118,7 +118,7 @@ if options.likes:
 		print('Like: ' + like['like']['fullText'])
 		print('Tweet ID: ' + like['like']['tweetId'])
 		if options.delete:
-			response = oauth.delete('https://api.twitter.com/2/users/:'+twitter_user_id+'/likes/:'+like['like']['tweetId'])
+			response = oauth.delete('https://api.twitter.com/2/users/'+twitter_user_id+'/likes/'+like['like']['tweetId'])
 			if response.status_code == 200:
 				print('Like DELETED (%d)' % (response.status_code))
 				deleted += 1
