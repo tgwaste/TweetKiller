@@ -94,7 +94,7 @@ if options.tweets:
 	deleted = 0
 	if options.delete:
 		if options.count > 15:
-			print('You may only deleted %s15%s tweets per 24 hour period' % (GA, NC))
+			print('You may only delete %s15%s tweets per 24 hour period' % (GA, NC))
 			sys.exit(1)
 		seconds_remaining = check_wait_time()
 		if seconds_remaining > 0:
