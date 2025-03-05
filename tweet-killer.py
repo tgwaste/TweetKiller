@@ -26,6 +26,7 @@ if len(sys.argv[1:]) == 0:
 with open(options.auth, 'r') as f:
 	credentials = json.load(f)
 
+tweet_killer_wait = '/tmp/tweet-killer-wait.txt'
 request_token_url = 'https://api.twitter.com/oauth/request_token'
 oauth = requests_oauthlib.OAuth1Session(credentials['consumer_key'], client_secret=credentials['consumer_secret'])
 
@@ -72,6 +73,17 @@ def scrub(json_file, thelist, deleted):
 	with open(json_file, 'w') as f:
 		f.write(json.dumps(thelist, sort_keys=False, indent=4))
 
+def check_wait_time():
+	seconds_remaining = 0
+	if os.path.exists(tweet_killer_wait):
+		with open(tweet_killer_wait) as f:
+			seconds_remaining = int(f.read().strip()) - int(time.time())
+	if seconds_remaining > 0:
+		return seconds_remaining
+	with open(tweet_killer_wait, 'w') as f:
+		f.write(str(int(time.time()) + 86500))
+	return 0
+
 tweets_file = '/tmp/tweets.json'
 likes_file = '/tmp/likes.json'
 
@@ -80,6 +92,18 @@ extract('data/like.js', likes_file, options.force)
 
 if options.tweets:
 	deleted = 0
+	if options.delete:
+		if options.count > 15:
+			print('You may only deleted %s15%s tweets per 24 hour period' % (GA, NC))
+			sys.exit(1)
+		seconds_remaining = check_wait_time()
+		if seconds_remaining > 0:
+			hours = seconds_remaining // 3600
+			seconds_remaining %= 3600
+			minutes = seconds_remaining // 60
+			seconds_remaining %= 60
+			print('You must wait %s%dh %dm %ds%s before deleting more tweets.' % (GA, hours, minutes, seconds_remaining, NC))
+			sys.exit(1)
 	with open(tweets_file, 'r') as f:
 		tweets = json.load(f)
 	print()
